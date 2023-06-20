@@ -1,9 +1,9 @@
 import {
   createServerActionClient,
   createServerComponentClient,
-} from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+} from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 const resources = [
   {
@@ -24,27 +24,29 @@ const resources = [
       'Want to see a code example containing some common patterns with Next.js and Supabase? Check out this repo!',
     url: 'https://github.com/supabase/supabase/tree/master/examples/auth/nextjs',
   },
-]
+];
 
 export default async function Index() {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createServerComponentClient({ cookies });
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   // This is a Protected Route that can only be accessed by authenticated users
   // users who are not signed in will be redirected to the `/login` route
   if (!user) {
-    redirect('/login')
+    redirect('/login');
   }
 
+  console.log({ user });
+
   const signOut = async () => {
-    'use server'
-    const supabase = createServerActionClient({ cookies })
-    await supabase.auth.signOut()
-    redirect('/login')
-  }
+    'use server';
+    const supabase = createServerActionClient({ cookies });
+    await supabase.auth.signOut();
+    redirect('/login');
+  };
 
   return (
     <div className="flex-1 flex flex-col max-w-3xl mt-72">
@@ -90,5 +92,5 @@ export default async function Index() {
         </ul>
       </div>
     </div>
-  )
+  );
 }
