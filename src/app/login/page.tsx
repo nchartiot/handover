@@ -1,50 +1,102 @@
 'use client';
 
-import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
-  const [view, setView] = useState<'login' | 'check-email'>('login');
+  const [password, setPassword] = useState('');
+  const [view, setView] = useState('sign-in');
+  const router = useRouter();
   const supabase = createClientComponentClient();
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithOtp({
+    await supabase.auth.signUp({
       email,
+      password,
       options: {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
-    console.log({ data, error });
     setView('check-email');
   };
 
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    router.push('/');
+  };
+
   return (
-    <div className="flex-1 flex flex-col w-full max-w-sm justify-center gap-2">
+    <div className="flex w-full max-w-sm flex-1 flex-col justify-center gap-2">
       {view === 'check-email' ? (
-        <p className="text-center text-gray-400">
+        <p className="text-center text-neutral-400">
           Check <span className="font-bold text-white">{email}</span> to
-          continue!
+          continue signing up
         </p>
       ) : (
         <form
-          className="flex-1 flex flex-col w-full max-w-sm justify-center gap-2"
-          onSubmit={handleSignIn}
+          className="flex w-full max-w-sm flex-1 flex-col justify-center gap-2"
+          onSubmit={view === 'sign-in' ? handleSignIn : handleSignUp}
         >
-          <label className="text-md text-gray-400" htmlFor="email">
+          <label className="text-md text-neutral-400" htmlFor="email">
             Email
           </label>
           <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            className="mb-6 rounded-md border bg-inherit px-4 py-2 text-neutral-100"
             name="email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             placeholder="you@example.com"
           />
-          <button className="bg-green-700 rounded px-4 py-2 text-gray-200 mb-6">
-            Sign In
-          </button>
+          <label className="text-md text-neutral-400" htmlFor="password">
+            Password
+          </label>
+          <input
+            className="mb-6 rounded-md border bg-inherit px-4 py-2 text-neutral-100"
+            type="password"
+            name="password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            placeholder="••••••••"
+          />
+          {view === 'sign-in' ? (
+            <>
+              <button className="mb-6 rounded bg-green-700 px-4 py-2 text-neutral-200">
+                Sign In
+              </button>
+              <p className="text-center text-sm text-neutral-500">
+                Don&apos;t have an account?
+                <button
+                  className="ml-1 text-white underline"
+                  onClick={() => setView('sign-up')}
+                >
+                  Sign Up Now
+                </button>
+              </p>
+            </>
+          ) : null}
+          {view === 'sign-up' ? (
+            <>
+              <button className="mb-6 rounded bg-green-700 px-4 py-2 text-neutral-200">
+                Sign Up
+              </button>
+              <p className="text-center text-sm text-neutral-500">
+                Already have an account?
+                <button
+                  className="ml-1 text-white underline"
+                  onClick={() => setView('sign-in')}
+                >
+                  Sign In Now
+                </button>
+              </p>
+            </>
+          ) : null}
         </form>
       )}
     </div>
