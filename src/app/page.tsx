@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { HeroImage } from '@/components/hero-image';
 import { LoginDialog } from '@/components/login-dialog';
@@ -10,10 +11,12 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
+  if (user) {
+    redirect('/dashboard');
+  }
 
   return (
-    <div className="">
+    <div className="bg-dotted-spacing-4 bg-dotted-gray-200 dark:bg-dotted-gray-900">
       <div className="relative isolate pt-14">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -39,7 +42,7 @@ export default async function Home() {
                 fugiat aliqua.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                {user ? <p>Welcome {user.email}</p> : <LoginDialog />}
+                <LoginDialog />
               </div>
             </div>
             <div className="mt-16 flow-root sm:mt-24">
