@@ -4,8 +4,10 @@ import { redirect } from 'next/navigation';
 
 import { DashboardCard } from '@/components/dashboard-card';
 
+import { Database } from '../types/supabase';
+
 export default async function DashboardPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createServerComponentClient<Database>({ cookies });
 
   const { data: screens } = await supabase.from('screens').select('*');
   const {
