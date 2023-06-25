@@ -3,8 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { DashboardCard } from '@/components/dashboard-card';
-
-import { Database } from '../types/supabase';
+import { Database } from '@/types/supabase';
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient<Database>({ cookies });
