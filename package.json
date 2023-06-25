@@ -5,7 +5,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"./src/**/*.?(ts|tsx|js,jsx,json,md})\""
+    "format": "prettier --write \"./src/**/*.?(ts|tsx|js,jsx,json,md})\"",
+    "codegen": "pnpm dlx supabase gen types typescript --project-id \"kwwlxvuarysykouxvdwu\" --schema public > ./src/types/supabase.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.4",
