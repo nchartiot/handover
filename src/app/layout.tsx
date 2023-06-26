@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <main className="min-w-screen flex min-h-screen flex-col">
+        <main className="min-w-screen flex flex-col">
           <ThemeProvider attribute="class" defaultTheme="light">
             <SiteHeader />
             {children}
