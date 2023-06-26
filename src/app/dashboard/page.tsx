@@ -3,7 +3,10 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { DashboardCard } from '@/components/dashboard-card';
+import { UploadScreenDialog } from '@/components/upload-screen-dialog';
 import { Database } from '@/types/supabase';
+
+export const revalidate = 0;
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient<Database>({ cookies });
@@ -16,9 +19,11 @@ export default async function DashboardPage() {
   if (!user) redirect('/');
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <pre>{JSON.stringify(screens)}</pre>
+    <div className="px-14 py-4">
+      <div className="flex items-center justify-between">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Welcome, {user.email}</h3>
+        <UploadScreenDialog />
+      </div>
       {screens?.map((screen) => (
         <DashboardCard key={screen.id} htmlString={screen.html_file} name={screen.name} />
       ))}
