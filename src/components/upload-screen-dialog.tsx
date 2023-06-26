@@ -32,6 +32,7 @@ import { Database } from '@/types/supabase';
 
 export function UploadScreenDialog() {
   const [svgFile, setSvgFile] = useState<{ name: string; content: string }>();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
 
@@ -98,11 +99,12 @@ export function UploadScreenDialog() {
       .insert({ name: values.name, html_file: values.file });
 
     router.refresh();
+    setDialogOpen(false)
     console.log({ data, error, status });
   }
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="default">Upload new screen</Button>
       </DialogTrigger>
