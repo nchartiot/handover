@@ -16,14 +16,11 @@ export async function DashboardCard({ name, id }: DashboardCardProps) {
   const [imageUrl, setImageUrl] = useState<string>();
   const getImage = async () => {
     const res = await fetch(`/api/card-image/?id=${id}`);
-    const text = await res.text()
-
-    console.log({ text });
 
     const imgBlob = await res.blob();
     const imgSrc = URL.createObjectURL(imgBlob);
 
-    console.log({imgSrc, text, imgBlob});
+    console.log({ imgSrc, imgBlob });
     setImageUrl(imgSrc);
   };
 
