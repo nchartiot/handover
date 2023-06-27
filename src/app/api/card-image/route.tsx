@@ -2,13 +2,30 @@ import { ImageResponse } from 'next/server';
 // App router includes @vercel/og.
 // No need to install it.
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
+
+// TODO: Duplicate or move this file outside the `_examples` folder to make it a route
+
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { Database } from '@/types/supabase';
+import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const element = searchParams.get('element') || '<h1>hello</h1>';
+    const screenId = searchParams.get('id') || 0;
 
+    // Create a Supabase client configured to use cookies
+    const supabase = createRouteHandlerClient<Database>({ cookies });
+
+    // This assumes you have a `todos` table in Supabase. Check out
+    // the `Create Table and seed with data` section of the README 👇
+    // https://github.com/vercel/next.js/blob/canary/examples/with-supabase/README.md
+    const { data } = await supabase.from('screens').select('html_file').eq('id', screenId);
+    console.log({ data });
+
+    return NextResponse.json(data);
     // // ?title=<title>
     // const hasTitle = searchParams.has('title');
     // const title = hasTitle
@@ -17,7 +34,7 @@ export async function GET(request: Request) {
 
     const name = searchParams.get('name') || 'default';
 
-    console.log({ element });
+    // console.log({ element });
 
     return new ImageResponse(
       (

@@ -1,35 +1,46 @@
-// 'use client';
+'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export async function DashboardCard({ htmlString, name }: { htmlString: string; name: string }) {
-  // const [imageUrl, setImageUrl] = useState<string>();
-  // const getImage = async () => {
-  //   const res = await fetch(`/og/?element=${htmlString}`);
+type DashboardCardProps = {
+  name: string;
+  id: number;
+};
 
-  //   const imgBlob = await res.blob();
-  //   const imgSrc = URL.createObjectURL(imgBlob);
+export async function DashboardCard({ name, id }: DashboardCardProps) {
+  const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string>();
+  const getImage = async () => {
+    const res = await fetch(`/api/card-image/?id=${id}`);
+    const json = await res.json()
 
-  //   console.log();
-  //   setImageUrl(imgSrc);
-  // };
+    console.log({ json });
 
-  // useEffect(() => {
-  //   getImage();
-  // }, []);
+    const imgBlob = await res.blob();
+    const imgSrc = URL.createObjectURL(imgBlob);
+
+    console.log();
+    setImageUrl(imgSrc);
+  };
+
+  useEffect(() => {
+    getImage();
+  }, []);
 
   return (
-    <Card className="max-w-md">
+    <Card
+      className="h-52 max-w-md cursor-pointer select-none"
+      onClick={() => router.push(`/dashboard/${id}`)}
+    >
       <CardHeader>
         <CardTitle>{name}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* {imageUrl && (
-          <Image src={imageUrl} alt="Vercel" width={232} height={200} />
-        )} */}
+        <Image src={`/api/card-image/?id=${id}`} alt="Vercel" width={232} height={200} />
         {/* {imgSrc && <Image src={imgSrc} alt="Vercel" width={232} height={200} />} */}
       </CardContent>
     </Card>
