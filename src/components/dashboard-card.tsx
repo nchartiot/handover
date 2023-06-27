@@ -16,14 +16,14 @@ export async function DashboardCard({ name, id }: DashboardCardProps) {
   const [imageUrl, setImageUrl] = useState<string>();
   const getImage = async () => {
     const res = await fetch(`/api/card-image/?id=${id}`);
-    const json = await res.json()
+    const text = await res.text()
 
-    console.log({ json });
+    console.log({ text });
 
     const imgBlob = await res.blob();
     const imgSrc = URL.createObjectURL(imgBlob);
 
-    console.log();
+    console.log({imgSrc, text, imgBlob});
     setImageUrl(imgSrc);
   };
 
@@ -41,7 +41,7 @@ export async function DashboardCard({ name, id }: DashboardCardProps) {
       </CardHeader>
       <CardContent>
         <Image src={`/api/card-image/?id=${id}`} alt="Vercel" width={232} height={200} />
-        {/* {imgSrc && <Image src={imgSrc} alt="Vercel" width={232} height={200} />} */}
+        {imageUrl && <Image src={imageUrl} alt="Vercel" width={232} height={200} />}
       </CardContent>
     </Card>
   );

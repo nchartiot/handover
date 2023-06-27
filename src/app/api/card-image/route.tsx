@@ -8,7 +8,6 @@ import { ImageResponse } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { Database } from '@/types/supabase';
-import { Divide } from 'lucide-react';
 
 export async function GET(request: Request) {
   try {
@@ -23,7 +22,7 @@ export async function GET(request: Request) {
     // https://github.com/vercel/next.js/blob/canary/examples/with-supabase/README.md
     const { data } = await supabase.from('screens').select('html_file').eq('id', screenId);
 
-    if (!data) return NextResponse.error();
+    if (!data) throw new Error('could not find data');
 
     const htmlFile = data[0].html_file;
 
