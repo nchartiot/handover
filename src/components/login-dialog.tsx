@@ -1,8 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState } from 'react';
-import { z, type ZodError } from 'zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,37 +16,43 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
-const emailSchema = z.string().email('This is not a valid email.');
+const formSchema = z.object({
+  email: z.string().email('This is not a valid email.'),
+});
 
 export function LoginDialog() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState<ZodError>();
   const [view, setView] = useState<'sign-in' | 'check-email'>('sign-in');
   const supabase = createClientComponentClient();
 
-  const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
 
-    const result = await emailSchema.safeParseAsync(email);
-
-    if (!result.success) {
-      console.log(result.error);
-      setError(result.error);
-      return;
-    }
-
-    await supabase.auth.signInWithOtp({
+  async function onSubmit({ email }: z.infer<typeof formSchema>) {
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
 
-    setView('check-email');
-  };
+    if (!error) setView('check-email');
+  }
+
+  console.log(form.getValues());
 
   return (
     <Dialog>
@@ -53,47 +61,38 @@ export function LoginDialog() {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[465px]">
+        <DialogHeader>
+          <DialogTitle>Welcome</DialogTitle>
+          <DialogDescription>Join us! Only email is required.</DialogDescription>
+        </DialogHeader>
+
         {view === 'check-email' ? (
-          <>
-            <DialogHeader>
-              <DialogTitle>Welcome</DialogTitle>
-              <DialogDescription>Join us! Only email is required.</DialogDescription>
-            </DialogHeader>
-            <div className="flex items-center justify-center gap-4 py-4">
-              <p className="text-center">
-                Check <span className="italic">{email}</span> to finish your sign in.
-              </p>
-            </div>
-          </>
+          <div className="flex items-center justify-center gap-4 py-4">
+            <p className="text-center">
+              Check <span className="italic">{form.getValues().email}</span> to finish your sign in.
+            </p>
+          </div>
         ) : (
-          <>
-            <DialogHeader>
-              <DialogTitle>Welcome</DialogTitle>
-              <DialogDescription>Join us! Only email is required.</DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col justify-center gap-1 py-4">
-              <div className="flex items-center gap-4 py-4">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="col-span-3"
-                  placeholder="you@example.com"
-                />
-              </div>
-              {error && (
-                <p className="text-center text-sm text-red-500">{error.issues[0].message}</p>
-              )}
-            </div>
-            <DialogFooter>
-              <Button onClick={handleSignIn} type="submit">
-                Sign In
-              </Button>
-            </DialogFooter>
-          </>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="you@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Sign In</Button>
+              </DialogFooter>
+            </form>
+          </Form>
         )}
       </DialogContent>
     </Dialog>
