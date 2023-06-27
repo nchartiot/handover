@@ -1,15 +1,14 @@
-import { ImageResponse } from 'next/server';
 // App router includes @vercel/og.
 // No need to install it.
-
 // export const runtime = 'edge';
-
 // TODO: Duplicate or move this file outside the `_examples` folder to make it a route
-
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { Database } from '@/types/supabase';
+import { ImageResponse } from 'next/server';
 import { NextResponse } from 'next/server';
+
+import { Database } from '@/types/supabase';
+import { Divide } from 'lucide-react';
 
 export async function GET(request: Request) {
   try {
@@ -23,72 +22,15 @@ export async function GET(request: Request) {
     // the `Create Table and seed with data` section of the README 👇
     // https://github.com/vercel/next.js/blob/canary/examples/with-supabase/README.md
     const { data } = await supabase.from('screens').select('html_file').eq('id', screenId);
-    console.log({ data });
 
-    return NextResponse.json(data);
-    // // ?title=<title>
-    // const hasTitle = searchParams.has('title');
-    // const title = hasTitle
-    //   ? searchParams.get('title')?.slice(0, 100)
-    //   : 'My default title';
+    if (!data) return NextResponse.error();
 
-    const name = searchParams.get('name') || 'default';
+    const htmlFile = data[0].html_file;
 
-    // console.log({ element });
-
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            backgroundColor: 'black',
-            backgroundSize: '150px 150px',
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            flexWrap: 'nowrap',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              justifyItems: 'center',
-            }}
-          >
-            <img
-              alt="Vercel"
-              height={200}
-              src="data:image/svg+xml,%3Csvg width='116' height='100' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M57.5 0L115 100H0L57.5 0z' /%3E%3C/svg%3E"
-              style={{ margin: '0 30px' }}
-              width={232}
-            />
-          </div>
-          <div
-            style={{
-              fontSize: 60,
-              fontStyle: 'normal',
-              letterSpacing: '-0.025em',
-              color: 'white',
-              marginTop: 30,
-              padding: '0 120px',
-              lineHeight: 1.4,
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {name}
-          </div>
-        </div>
-      ),
-      {
-        width: 1200,
-        height: 630,
-      }
-    );
+    return new ImageResponse(<div dangerouslySetInnerHTML={{ __html: htmlFile }} />, {
+      width: 1200,
+      height: 630,
+    });
   } catch (e: any) {
     console.log(`${e.message}`);
     return new Response(`Failed to generate the image`, {
