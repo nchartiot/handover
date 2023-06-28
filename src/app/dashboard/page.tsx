@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   return (
     <div className="px-14 py-4">
       <div className="flex items-center justify-between">
-        {/* <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Welcome, {user.email}</h3> */}
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Welcome, {user.email}</h3>
         <UploadScreenDialog />
       </div>
       <hr className="mb-12 mt-10" />
