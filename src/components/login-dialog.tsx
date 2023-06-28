@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -32,6 +33,7 @@ const formSchema = z.object({
 
 export function LoginDialog() {
   const [view, setView] = useState<'sign-in' | 'check-email'>('sign-in');
+  const [loading, setLoading] = useState(false);
   const supabase = createClientComponentClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +44,7 @@ export function LoginDialog() {
   });
 
   async function onSubmit({ email }: z.infer<typeof formSchema>) {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -50,9 +53,8 @@ export function LoginDialog() {
     });
 
     if (!error) setView('check-email');
+    setLoading(false);
   }
-
-  console.log(form.getValues());
 
   return (
     <Dialog>
@@ -89,7 +91,14 @@ export function LoginDialog() {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Sign In</Button>
+                {loading ? (
+                  <Button disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button>
+                ) : (
+                  <Button type="submit">Sign In</Button>
+                )}
               </DialogFooter>
             </form>
           </Form>
