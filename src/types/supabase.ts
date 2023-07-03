@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
@@ -11,22 +11,28 @@ export interface Database {
     Tables: {
       screens: {
         Row: {
+          changes: number
           created_at: string | null
           html_file: string
           id: number
           name: string
+          version: number
         }
         Insert: {
+          changes?: number
           created_at?: string | null
           html_file: string
           id?: number
           name: string
+          version?: number
         }
         Update: {
+          changes?: number
           created_at?: string | null
           html_file?: string
           id?: number
           name?: string
+          version?: number
         }
         Relationships: []
       }
