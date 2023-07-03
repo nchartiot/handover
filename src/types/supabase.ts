@@ -11,7 +11,7 @@ export interface Database {
     Tables: {
       screens: {
         Row: {
-          changes: number
+          changes: string
           created_at: string | null
           html_file: string
           id: number
@@ -19,7 +19,7 @@ export interface Database {
           version: number
         }
         Insert: {
-          changes?: number
+          changes: string
           created_at?: string | null
           html_file: string
           id?: number
@@ -27,7 +27,7 @@ export interface Database {
           version?: number
         }
         Update: {
-          changes?: number
+          changes?: string
           created_at?: string | null
           html_file?: string
           id?: number
