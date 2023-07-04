@@ -29,6 +29,13 @@ export default async function ScreenPage({ params }: { params: { id: number } })
   const supabase = createServerComponentClient<Database>({ cookies });
 
   const { data: screen } = await supabase.from('screens').select('*').eq('id', screenId).single();
+  const { data: version } = await supabase
+    .from('screens')
+    .select('version, changes')
+    .eq('name', screen?.name)
+    .order('version', { ascending: false });
+
+  console.log(version);
   console.log(screen?.html_file);
 
   return (
@@ -41,6 +48,14 @@ export default async function ScreenPage({ params }: { params: { id: number } })
         </Button>
         <Suspense fallback={<Skeleton />}>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">{screen?.name}</h3>
+          {/* loop the versions */}
+          <div className="flex flex-col gap-4">
+            {version?.map((v) => (
+              <p>
+                {v.changes} - {v.version}
+              </p>
+            ))}
+          </div>
         </Suspense>
       </div>
       <hr className="my-8" />
