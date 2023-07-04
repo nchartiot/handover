@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Database } from '@/types/supabase';
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 
 export function UploadScreenDialog() {
   const [svgFile, setSvgFile] = useState<{ name: string; content: string }>();
@@ -101,7 +102,7 @@ export function UploadScreenDialog() {
         .eq('name', values.name)
         .limit(1);
 
-      if (existingScreen) {
+      if (existingScreen && existingScreen.length > 0) {
         await updateExistingScreen(values, existingScreen[0].id);
       } else {
         await createNewScreen(values);
@@ -110,7 +111,7 @@ export function UploadScreenDialog() {
       router.refresh();
       setDialogOpen(false);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}`);
     }
   }
 
@@ -157,7 +158,7 @@ export function UploadScreenDialog() {
   async function createNewScreen(values: z.infer<typeof formSchema>) {
     const { data, error, status } = await supabase
       .from('screens')
-      .insert({ name: values.name, html_file: values.file, changes: '', version: 1 });
+      .insert({ name: values.name, html_file: values.file, changes: 'TODO: Specify the changes here', version: 1 });
 
     if (error) {
       console.error(error);
