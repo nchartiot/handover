@@ -92,7 +92,7 @@ export function UploadScreenDialog() {
       }
     }
   };
-  
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const { data: existingScreen } = await supabase
