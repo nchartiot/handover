@@ -146,11 +146,9 @@ export function UploadScreenDialog() {
 
   async function createNewVersion(screenId: number, values: z.infer<typeof formSchema>) {
     const { data: lastVersion } = await supabase
-    .from('screens')
+    .from('latest_screens')
     .select('version')
-    .order('version', { ascending: false })
-    .limit(1);
-
+    .eq('name', values.name);
     const newVersion = (lastVersion && lastVersion[0]?.version + 1) || 1;
 
 
