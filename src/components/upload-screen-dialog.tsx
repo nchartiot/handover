@@ -93,15 +93,101 @@ export function UploadScreenDialog() {
     }
   };
 
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   const { data, error, status } = await supabase
+  //     .from('screens')
+  //     .insert({ name: values.name, html_file: values.file });
+
+  //   router.refresh();
+  //   setDialogOpen(false)
+  //   console.log({ data, error, status });
+  // }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const { data: existingScreen } = await supabase
+        .from('screens')
+        .select('id')
+        .eq('name', values.name)
+        .maybeSingle();
+
+      if (existingScreen) {
+        await updateExistingScreen(values, existingScreen.id);
+      } else {
+        await createNewScreen(values);
+      }
+
+      router.refresh();
+      setDialogOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateExistingScreen(values: z.infer<typeof formSchema>, screenId: number) {
+    const versionResponse = await createNewVersion(screenId, values);
+
+    if (!versionResponse || versionResponse.error) {
+      throw versionResponse ? versionResponse.error : new Error('Version response is undefined');
+    }
+
+    const updateResponse = await supabase
+      .from('screens')
+      .update({ html_file: values.file })
+      .eq('id', screenId);
+
+    if (!updateResponse || updateResponse.error) {
+      throw updateResponse ? updateResponse.error : new Error('Update response is undefined');
+    }
+
+    console.log({ data: updateResponse.data });
+  }
+
+
+  async function createNewVersion(screenId: number, values: z.infer<typeof formSchema>) {
+    const { data: lastVersion } = await supabase
+    .from('screens')
+    .select('version')
+    .order('version', { ascending: false })
+    .limit(1);
+
+    const newVersion = (lastVersion && lastVersion[0]?.version + 1) || 1;
+
+
+    const response = await supabase
+      .from('screens')
+      .insert({
+        name: values.name,
+        html_file: values.file,
+        version: newVersion,
+        changes: "TODO: Specify the changes here"
+      });
+  
+    if (response.error) {
+      throw response.error;
+    }
+  
+    console.log({ newVersion: response.data });
+  
+    return response; // Add this line
+  }
+  
+
+  async function createNewScreen(values: z.infer<typeof formSchema>) {
     const { data, error, status } = await supabase
       .from('screens')
-      .insert({ name: values.name, html_file: values.file });
+      .insert({ name: values.name, html_file: values.file, changes: "", version: 1 });
 
-    router.refresh();
-    setDialogOpen(false)
-    console.log({ data, error, status });
+    if (error) {
+      throw error;
+    }
+
+    console.log({ data, status });
   }
+
+
+
+
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
