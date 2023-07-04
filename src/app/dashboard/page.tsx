@@ -28,7 +28,8 @@ function LoadingDashboard() {
 export default async function DashboardPage() {
   const supabase = createServerComponentClient<Database>({ cookies });
 
-  const { data: screens } = await supabase.from('screens').select('name, id');
+  const { data: screens } = await supabase.from('screens').select('name, id').order("version", {ascending: false, nullsFirst: true}); // Need to add isActive column in Supabase, then we can filter only the active screens more  easily
+  
   const {
     data: { user },
   } = await supabase.auth.getUser();
