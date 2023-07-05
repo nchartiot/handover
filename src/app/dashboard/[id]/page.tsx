@@ -8,6 +8,7 @@ import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Database } from '@/types/supabase';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Props = {
   params: { id: string };
@@ -48,18 +49,9 @@ export default async function ScreenPage({ params }: { params: { id: number } })
         </Button>
         <Suspense fallback={<Skeleton />}>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">{screen?.name}</h3>
-          {/* loop the versions */}
-          <div className="flex flex-col gap-4">
-            {version?.map((v) => (
-              <p>
-                {v.changes} - {v.version}
-              </p>
-            ))}
-          </div>
         </Suspense>
       </div>
       <hr className="my-8" />
-
       <Suspense fallback={<Skeleton />}>
         <div className="flex items-center justify-between">
           <div
@@ -68,6 +60,16 @@ export default async function ScreenPage({ params }: { params: { id: number } })
           ></div>
         </div>
       </Suspense>
+      <ScrollArea className="h-96 w-60 rounded-md border">
+        <div className="p-4">
+          <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
+          {version?.map((v) => (
+            <p>
+              {v.version} - {v.changes}
+            </p>
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 }
