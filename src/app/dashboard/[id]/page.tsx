@@ -57,19 +57,19 @@ export default async function ScreenPage({ params }: { params: { id: number } })
           <div
             className="h-96 w-96"
             dangerouslySetInnerHTML={{ __html: screen?.html_file as string }}
-          ></div>
+          />
+          <ScrollArea className="h-96 w-60 rounded-md border">
+            <div className="p-4">
+              <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
+              {version?.map((v) => (
+                <p>
+                  {v.version} - {v.changes}
+                </p>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
       </Suspense>
-      <ScrollArea className="h-96 w-60 rounded-md border">
-        <div className="p-4">
-          <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
-          {version?.map((v) => (
-            <p>
-              {v.version} - {v.changes}
-            </p>
-          ))}
-        </div>
-      </ScrollArea>
     </div>
   );
 }
