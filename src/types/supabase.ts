@@ -24,7 +24,7 @@ export interface Database {
           html_file: string
           id?: number
           name: string
-          version?: number
+          version: number
         }
         Update: {
           changes?: string
