@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Database } from '@/types/supabase';
 
@@ -29,7 +30,11 @@ export default async function ScreenPage({ params }: { params: { id: number } })
   const supabase = createServerComponentClient<Database>({ cookies });
 
   const { data: screen } = await supabase.from('screens').select('*').eq('id', screenId).single();
-  console.log(screen?.html_file);
+  const { data: pastScreens } = await supabase
+    .from('screens')
+    .select('id, version, changes, is_svg')
+    .eq('name', screen?.name)
+    .order('version', { ascending: false });
 
   return (
     <div className="px-14 py-8">
@@ -44,13 +49,26 @@ export default async function ScreenPage({ params }: { params: { id: number } })
         </Suspense>
       </div>
       <hr className="my-8" />
-
       <Suspense fallback={<Skeleton />}>
         <div className="flex items-center justify-between">
           <div
             className="h-96 w-96"
             dangerouslySetInnerHTML={{ __html: screen?.html_file as string }}
-          ></div>
+          />
+          <ScrollArea className="h-96 w-60 rounded-md border">
+            <div className="p-4">
+              <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
+              <ul>
+                {pastScreens?.map((screen) => (
+                  <li key={screen.id}>
+                    <Link href={`/dashboard/${screen.id}`}>
+                      {screen.version} - {screen.changes}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ScrollArea>
         </div>
       </Suspense>
     </div>
