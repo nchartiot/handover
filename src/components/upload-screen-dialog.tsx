@@ -29,7 +29,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Database } from '@/types/supabase';
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 
 export function UploadScreenDialog() {
   const [svgFile, setSvgFile] = useState<{ name: string; content: string }>();
@@ -98,70 +97,26 @@ export function UploadScreenDialog() {
     try {
       const { data: existingScreen } = await supabase
         .from('screens')
-        .select('id')
+        .select('version')
         .eq('name', values.name)
-        .limit(1);
+        .single();
 
-      if (existingScreen && existingScreen.length > 0) {
-        await updateExistingScreen(values, existingScreen[0].id);
-      } else {
-        await createNewScreen(values);
+      const newVersion = existingScreen ? existingScreen.version + 1 : 1;
+      const { error } = await supabase.from('screens').insert({
+        name: values.name,
+        html_file: values.file,
+        version: newVersion,
+        changes: 'TODO: Specify the changes here',
+      });
+
+      if (error) {
+        throw new Error(error.message);
       }
 
       router.refresh();
       setDialogOpen(false);
     } catch (error) {
       console.error(`Error: ${error}`);
-    }
-  }
-
-  async function updateExistingScreen(values: z.infer<typeof formSchema>, screenId: number) {
-    const versionResponse = await createNewVersion(screenId, values);
-
-    if (!versionResponse || versionResponse.error) {
-      throw versionResponse ? versionResponse.error : new Error('Version response is undefined');
-    }
-
-    const updateResponse = await supabase
-      .from('screens')
-      .update({ html_file: values.file })
-      .eq('id', screenId);
-
-    if (!updateResponse || updateResponse.error) {
-      throw updateResponse ? updateResponse.error : new Error('Update response is undefined');
-    }
-  }
-
-  async function createNewVersion(screenId: number, values: z.infer<typeof formSchema>) {
-    const { data } = await supabase
-      .from('screens')
-      .select('version')
-      .eq('name', values.name)
-      .order('version', { ascending: false })
-      .limit(1);
-
-    const version = data && data.length > 0 ? data[0].version + 1 : 1;
-
-    const response = await supabase.from('screens').insert({
-      name: values.name,
-      html_file: values.file,
-      version: version,
-      changes: 'TODO: Specify the changes here',
-    });
-    if (response.error) {
-      console.log(response.error);
-    }
-
-    return response;
-  }
-
-  async function createNewScreen(values: z.infer<typeof formSchema>) {
-    const { data, error, status } = await supabase
-      .from('screens')
-      .insert({ name: values.name, html_file: values.file, changes: 'TODO: Specify the changes here', version: 1 });
-
-    if (error) {
-      console.error(error);
     }
   }
 
