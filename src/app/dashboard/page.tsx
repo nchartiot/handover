@@ -1,7 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { DashboardCard } from '@/components/dashboard-card';
@@ -27,15 +26,7 @@ function LoadingDashboard() {
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient<Database>({ cookies });
-
-  // const { data: screens } = await supabase.from('screens').select('name, id').order("version", {ascending: false, nullsFirst: true}); // Need to add isActive column in Supabase, then we can filter only the active screens more  easily
-  const { data: screens } = await supabase.from('latest_screens').select('name, id, version'); // Need to add isActive column in Supabase, then we can filter only the active screens more  easily
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect('/');
+  const { data: screens } = await supabase.from('latest_screens').select('name, id, version');
 
   return (
     <div className="px-14 py-8">
@@ -48,9 +39,9 @@ export default async function DashboardPage() {
       <Suspense fallback={<LoadingDashboard />}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {screens?.map((screen) => (
-            <div>
+            <div key={screen.id}>
               <p>{screen.version}</p>
-            <DashboardCard key={screen.id} name={screen.name} id={screen.id}/>
+              <DashboardCard key={screen.id} name={screen.name} id={screen.id} />
             </div>
           ))}
         </div>
