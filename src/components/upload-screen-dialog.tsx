@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -28,12 +30,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from '@/components/ui/textarea';
 import { Database } from '@/types/supabase';
-
 
 export function UploadScreenDialog() {
   const [svgFile, setSvgFile] = useState<{ name: string; content: string }>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
@@ -43,7 +45,7 @@ export function UploadScreenDialog() {
       message: 'Name must be at least 2 characters.',
     }),
     changes: z.string().min(10, {
-      message: "Changes must have at least 10 characters."
+      message: 'Changes must have at least 10 characters.',
     }),
     file: z.string().min(2, { message: 'A file is necessary.' }),
   });
@@ -100,6 +102,7 @@ export function UploadScreenDialog() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setLoading(true);
       const { data: existingScreen } = await supabase
         .from('screens')
         .select('version')
@@ -121,7 +124,8 @@ export function UploadScreenDialog() {
 
       router.refresh();
       form.reset();
-      setSvgFile(undefined)
+      setSvgFile(undefined);
+      setLoading(false);
       setDialogOpen(false);
     } catch (error) {
       console.error(`Error: ${error}`);
@@ -137,6 +141,10 @@ export function UploadScreenDialog() {
       <DialogContent className="sm:max-w-[465px]">
         <DialogHeader>
           <DialogTitle>Upload new screen</DialogTitle>
+          <DialogDescription>
+            Uploading a screen here will require an SVG, which will not be parsed. For the ideal
+            user experience, use the Figma plugin!
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -197,7 +205,14 @@ export function UploadScreenDialog() {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Submit</Button>
+              {loading ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </Button>
+              ) : (
+                <Button type="submit">Submit</Button>
+              )}
             </DialogFooter>
           </form>
         </Form>
