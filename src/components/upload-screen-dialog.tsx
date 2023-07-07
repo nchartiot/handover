@@ -109,7 +109,7 @@ export function UploadScreenDialog() {
         .eq('name', values.name)
         .single();
 
-      const newVersion = data ? data?.latest_version + 1 : 1;
+      const newVersion = data && data.latest_version ? data.latest_version + 1 : 1;
       const { error } = await supabase.from('screens').insert({
         name: values.name,
         html_file: values.file,
