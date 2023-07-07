@@ -50,10 +50,10 @@ export default async function ScreenPage({ params }: { params: { id: number } })
       </div>
       <hr className="my-8" />
       <Suspense fallback={<Skeleton />}>
-        <div className="flex items-center justify-between">
+        <div className="flex xl:flex-row flex-col items-center justify-between gap-4">
           <div
-            className="h-96 w-96"
-            dangerouslySetInnerHTML={{ __html: screen?.html_file as string }}
+            className="h-96 flex-1 min-w-[300px] max-w-7xl bg-red-500"
+            // dangerouslySetInnerHTML={{ __html: screen?.html_file as string }}
           />
           <ScrollArea className="h-96 w-60 rounded-md border">
             <div className="p-4">
