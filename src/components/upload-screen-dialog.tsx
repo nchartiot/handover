@@ -103,13 +103,13 @@ export function UploadScreenDialog() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-      const { data: existingScreen } = await supabase
-        .from('screens')
-        .select('version')
+      const { data } = await supabase
+        .from('latest_screen_versions')
+        .select('latest_version')
         .eq('name', values.name)
         .single();
 
-      const newVersion = existingScreen ? existingScreen.version + 1 : 1;
+      const newVersion = data ? data?.latest_version + 1 : 1;
       const { error } = await supabase.from('screens').insert({
         name: values.name,
         html_file: values.file,
