@@ -20,7 +20,7 @@ export interface Database {
         Insert: {
           comment: string
           created_at?: string
-          id: string
+          id?: string
           screen_id: string
           user_id: string
         }
@@ -99,9 +99,10 @@ export interface Database {
       }
     }
     Views: {
-      latest_screen_version: {
+      latest_screen_versions: {
         Row: {
-          version: number | null
+          latest_version: number | null
+          name: string | null
         }
         Relationships: []
       }
