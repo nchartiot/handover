@@ -99,6 +99,12 @@ export interface Database {
       }
     }
     Views: {
+      latest_screen_version: {
+        Row: {
+          version: number | null
+        }
+        Relationships: []
+      }
       latest_screens: {
         Row: {
           changes: string | null

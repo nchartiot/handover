@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type DashboardCardProps = {
   name: string;
-  id: number;
+  id: string;
 };
 
 export async function DashboardCard({ name, id }: DashboardCardProps) {

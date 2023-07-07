@@ -38,12 +38,16 @@ export default async function DashboardPage() {
 
       <Suspense fallback={<LoadingDashboard />}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {screens?.map((screen) => (
-            <div key={screen.id}>
-              <p>{screen.version}</p>
-              <DashboardCard key={screen.id} name={screen.name} id={screen.id} />
-            </div>
-          ))}
+          {screens?.map((screen) => {
+            if (!screen || !screen.name || !screen.id) return null;
+
+            return (
+              <div key={screen.id}>
+                <p>{screen.version}</p>
+                <DashboardCard key={screen.id} name={screen.name} id={screen.id} />
+              </div>
+            );
+          })}
         </div>
       </Suspense>
     </div>
