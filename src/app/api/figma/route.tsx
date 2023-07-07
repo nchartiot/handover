@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // App router includes @vercel/og.
 // No need to install it.
-// export const runtime = 'edge';
 // TODO: Duplicate or move this file outside the `_examples` folder to make it a route
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -9,7 +8,9 @@ import { NextResponse } from 'next/server';
 
 import { Database } from '@/types/supabase';
 
-export const corsHeaders = {
+export const runtime = 'edge';
+
+const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
