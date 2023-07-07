@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // App router includes @vercel/og.
 // No need to install it.
 // export const runtime = 'edge';
 // TODO: Duplicate or move this file outside the `_examples` folder to make it a route
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { ImageResponse } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { Database } from '@/types/supabase';
@@ -16,6 +16,7 @@ export const corsHeaders = {
 };
 
 const convertTextNode = (node: TextNode, baseStyle: string) => {
+  // @ts-ignore - fontSize is not in the types
   const fontSize = node?.style?.fontSize || 16;
   return `<p id='text' style='${baseStyle} font-size: ${fontSize}px; background-color: white; color: black'>${node.characters}</p>`;
 };
@@ -35,6 +36,7 @@ const convertRectangleNode = (node: RectangleNode, baseStyle: string) => {
 };
 
 const convertLineNode = (node: LineNode, baseStyle: string) => {
+  // @ts-ignore - strokeWeight is not in the types
   return `<div id='line' style='${baseStyle} height: ${node.strokeWeight}px; transform: rotate(${node.rotation}rad); background-color: black; border: unset;'></div>`;
 };
 
@@ -51,21 +53,26 @@ const convertNodeToHtml = (node: SceneNode, frameBoundingBox: Rect): string => {
 
   let baseStyleStr = `position: absolute; left: ${x}px; top: ${y}px; width: ${width}px; height: ${height}px; margin: 0px;`;
 
+  // @ts-ignore - fills is not in the types
   if (node.fills && node.fills.length > 0 && node.fills[0].color) {
+    // @ts-ignore - fills is not in the types
     const { r, g, b, a } = node.fills[0].color;
     baseStyleStr += ` background-color: rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a});`;
   }
 
-  // Convert strokes to border
+  // @ts-ignore - strokes is not in the types
   if (node.strokes && node.strokes.length > 0 && node.strokeWeight) {
+    // @ts-ignore - strokes is not in the types
     const { r, g, b, a } = node.strokes[0].color;
+    // @ts-ignore - strokeWeight is not in the types
     baseStyleStr += ` border: ${node.strokeWeight}px solid rgba(${r * 255}, ${g * 255}, ${
       b * 255
     }, ${a});`;
   }
 
-  // Convert cornerRadius to border-radius
+  // @ts-ignore - cornerRadius is not in the types
   if (node.cornerRadius) {
+    // @ts-ignore - cornerRadius is not in the types
     baseStyleStr += ` border-radius: ${node.cornerRadius}px;`;
   }
 
@@ -106,23 +113,33 @@ export async function POST(request: Request) {
     const {
       frame: { document },
     }: { frame: { document: FrameNode } } = await request.json();
+
     const html = convertFrameToHtml(document);
-    return NextResponse.json({ html }, { headers: corsHeaders });
+    const supabase = createRouteHandlerClient<Database>({ cookies });
 
-    // const { searchParams } = new URL(request.url);
-    // const screenId = searchParams.get('id') || 0;
+    const NAME = 'test name';
 
-    // // Create a Supabase client configured to use cookies
-    // const supabase = createRouteHandlerClient<Database>({ cookies });
+    const { data: existingScreen } = await supabase
+      .from('screens')
+      .select('version')
+      .eq('name', NAME)
+      .single();
 
-    // // This assumes you have a `todos` table in Supabase. Check out
-    // // the `Create Table and seed with data` section of the README 👇
-    // // https://github.com/vercel/next.js/blob/canary/examples/with-supabase/README.md
-    // const { data } = await supabase.from('screens').select('html_file').eq('id', screenId);
+    const newVersion = existingScreen ? existingScreen.version + 1 : 1;
 
-    // if (!data) throw new Error('could not find data');
+    const { error } = await supabase.from('screens').insert({
+      name: NAME,
+      html_file: html,
+      version: newVersion,
+      changes: 'test changes',
+      is_svg: false,
+    });
 
-    // const htmlFile = data[0].html_file;
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return NextResponse.json({}, { headers: corsHeaders, status: 200 });
   } catch (e: any) {
     console.log(`${e.message}`);
     return new Response(`Failed to generate the image`, {
