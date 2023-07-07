@@ -36,9 +36,7 @@ export default async function ProtectedRoute() {
 
       <div className="flex border-b py-3 text-sm text-neutral-100">
         <div className="flex w-full items-center justify-between">
-          <code className="rounded-lg bg-neutral-700 px-3 py-1 text-sm">
-            Protected page
-          </code>
+          <code className="rounded-lg bg-neutral-700 px-3 py-1 text-sm">Protected page</code>
           <span className="flex gap-4">
             Hey, {user.email}! <span className="border-r"></span>{' '}
             <form action={signOut}>
@@ -49,26 +47,14 @@ export default async function ProtectedRoute() {
       </div>
 
       <div className="mt-12 flex justify-center gap-8">
-        <Image
-          src="/supabase.svg"
-          alt="Supabase Logo"
-          width={225}
-          height={45}
-          priority
-        />
+        <Image src="/supabase.svg" alt="Supabase Logo" width={225} height={45} priority />
         <div className="h-10 rotate-45 border-l"></div>
-        <Image
-          src="/next.svg"
-          alt="Vercel Logo"
-          width={150}
-          height={36}
-          priority
-        />
+        <Image src="/next.svg" alt="Vercel Logo" width={150} height={36} priority />
       </div>
 
       <p className="mx-auto mt-8 max-w-2xl text-center text-3xl text-white">
-        The fastest way to get started building apps with{' '}
-        <strong>Supabase</strong> and <strong>Next.js</strong>
+        The fastest way to get started building apps with <strong>Supabase</strong> and{' '}
+        <strong>Next.js</strong>
       </p>
 
       <div className="mt-12 flex justify-center">

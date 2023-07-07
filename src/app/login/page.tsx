@@ -36,8 +36,7 @@ export default function Login() {
     <div className="flex w-full max-w-sm flex-1 flex-col justify-center gap-2">
       {view === 'check-email' ? (
         <p className="text-center text-neutral-400">
-          Check <span className="font-bold text-white">{email}</span> to
-          continue signing up
+          Check <span className="font-bold text-white">{email}</span> to continue signing up
         </p>
       ) : (
         <form
@@ -72,10 +71,7 @@ export default function Login() {
               </button>
               <p className="text-center text-sm text-neutral-500">
                 Don&apos;t have an account?
-                <button
-                  className="ml-1 text-white underline"
-                  onClick={() => setView('sign-up')}
-                >
+                <button className="ml-1 text-white underline" onClick={() => setView('sign-up')}>
                   Sign Up Now
                 </button>
               </p>
@@ -88,10 +84,7 @@ export default function Login() {
               </button>
               <p className="text-center text-sm text-neutral-500">
                 Already have an account?
-                <button
-                  className="ml-1 text-white underline"
-                  onClick={() => setView('sign-in')}
-                >
+                <button className="ml-1 text-white underline" onClick={() => setView('sign-in')}>
                   Sign In Now
                 </button>
               </p>

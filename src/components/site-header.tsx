@@ -13,11 +13,7 @@ export function SiteHeader() {
         <h1 className="font-semibold">Handover</h1>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           <nav className="flex items-center space-x-1">
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-            >
+            <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
               <div
                 className={cn(
                   buttonVariants({
