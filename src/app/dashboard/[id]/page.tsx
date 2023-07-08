@@ -6,10 +6,13 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { CommentSection } from '@/components/comment-section';
+import { StylesRenderer } from '@/components/styles-renderer';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Database } from '@/types/supabase';
+
+import { ScreenRenderer } from '../../../components/screen-renderer';
 
 type Props = {
   params: { id: string };
@@ -55,25 +58,29 @@ export default async function ScreenPage({ params }: { params: { id: number } })
       <hr className="my-8" />
       <Suspense fallback={<Skeleton />}>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col items-center justify-between gap-4 xl:flex-row">
+          <div className="flex h-[720px] flex-col items-center justify-between gap-4 xl:flex-row">
             <div
-              className="h-96 min-w-[300px] max-w-7xl flex-1"
-              dangerouslySetInnerHTML={{ __html: screen?.html_file as string }}
-            />
-            <ScrollArea className="h-96 w-60 rounded-md border">
-              <div className="p-4">
-                <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
-                <ul>
-                  {pastScreens?.map((screen) => (
-                    <li key={screen.id}>
-                      <Link href={`/dashboard/${screen.id}`}>
-                        {screen.version} - {screen.changes}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </ScrollArea>
+              className="h-[720px] w-[1080px] max-w-7xl flex-1"
+            >
+              {screen && <ScreenRenderer htmlString={screen?.html_file} isSvg={screen.is_svg} />}
+            </div>
+            <div className="flex flex-col gap-2">
+              <StylesRenderer />
+              <ScrollArea className="h-96 rounded-md border">
+                <div className="p-4">
+                  <h4 className="mb-4 text-sm font-medium leading-none">Changes:</h4>
+                  <ul>
+                    {pastScreens?.map((screen) => (
+                      <li key={screen.id}>
+                        <Link href={`/dashboard/${screen.id}`}>
+                          {screen.version} - {screen.changes}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollArea>
+            </div>
           </div>
           {screen && user && <CommentSection screenId={screen.id} userId={user.id} />}
         </div>
