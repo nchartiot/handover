@@ -66,8 +66,9 @@ const convertNodeToHtml = (node: SceneNode, frameBoundingBox: Rect): string => {
     // @ts-ignore - strokes is not in the types
     const { r, g, b, a } = node.strokes[0].color;
     // @ts-ignore - strokeWeight is not in the types
-    baseStyleStr += ` border: ${node.strokeWeight}px solid rgba(${r * 255}, ${g * 255}, ${b * 255
-      }, ${a});`;
+    baseStyleStr += ` border: ${node.strokeWeight}px solid rgba(${r * 255}, ${g * 255}, ${
+      b * 255
+    }, ${a});`;
   }
 
   // @ts-ignore - cornerRadius is not in the types
@@ -91,6 +92,7 @@ const convertNodeToHtml = (node: SceneNode, frameBoundingBox: Rect): string => {
 };
 
 const convertFrameToHtml = (frame: FrameNode) => {
+  if (!frame) return '';
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const frameBoundingBox = frame.absoluteBoundingBox!;
 
@@ -112,14 +114,13 @@ export async function POST(request: Request) {
   try {
     const {
       frame: { document },
-      projectName,
       screenName,
-      comment
+      comment,
     }: {
-      frame: { document: FrameNode },
-      projectName: string,
-      screenName: string,
-      comment: string
+      frame: { document: FrameNode };
+      projectName: string;
+      screenName: string;
+      comment: string;
     } = await request.json();
 
     const html = convertFrameToHtml(document);
