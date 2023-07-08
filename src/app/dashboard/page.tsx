@@ -45,7 +45,6 @@ export default async function DashboardPage() {
 
             return (
               <div key={screen.id}>
-                <p>{screen.version}</p>
                 <DashboardCard
                   key={screen.id}
                   name={screen.name}
