@@ -66,9 +66,8 @@ const convertNodeToHtml = (node: SceneNode, frameBoundingBox: Rect): string => {
     // @ts-ignore - strokes is not in the types
     const { r, g, b, a } = node.strokes[0].color;
     // @ts-ignore - strokeWeight is not in the types
-    baseStyleStr += ` border: ${node.strokeWeight}px solid rgba(${r * 255}, ${g * 255}, ${
-      b * 255
-    }, ${a});`;
+    baseStyleStr += ` border: ${node.strokeWeight}px solid rgba(${r * 255}, ${g * 255}, ${b * 255
+      }, ${a});`;
   }
 
   // @ts-ignore - cornerRadius is not in the types
@@ -113,26 +112,32 @@ export async function POST(request: Request) {
   try {
     const {
       frame: { document },
-    }: { frame: { document: FrameNode } } = await request.json();
+      projectName,
+      screenName,
+      comment
+    }: {
+      frame: { document: FrameNode },
+      projectName: string,
+      screenName: string,
+      comment: string
+    } = await request.json();
 
     const html = convertFrameToHtml(document);
     const supabase = createRouteHandlerClient<Database>({ cookies });
 
-    const NAME = 'test name';
-
     const { data } = await supabase
       .from('latest_screen_versions')
       .select('latest_version')
-      .eq('name', NAME)
+      .eq('name', screenName)
       .single();
 
     const newVersion = data && data.latest_version ? data.latest_version + 1 : 1;
 
     const { error } = await supabase.from('screens').insert({
-      name: NAME,
+      name: screenName,
       html_file: html,
       version: newVersion,
-      changes: 'test changes',
+      changes: comment,
       is_svg: false,
     });
 
