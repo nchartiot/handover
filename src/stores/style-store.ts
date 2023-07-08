@@ -11,6 +11,5 @@ export const useStyleStore = create<StyleStore>((set) => ({
   styles: '',
   setStyles: (styles) => set({ styles }),
   isSvg: false,
-  setIsSvg: (isSvg) => set({isSvg})
-
+  setIsSvg: (isSvg) => set({ isSvg }),
 }));

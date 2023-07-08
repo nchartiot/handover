@@ -81,7 +81,7 @@ export function ScreenRenderer({ htmlString, isSvg }: ScreenRendererProps) {
       document.removeEventListener('click', handleClick);
       document.body.removeChild(overlay);
     };
-  }, []);
+  }, [setStyles]);
 
   return <div ref={parentRef}>{parse(htmlString)}</div>;
 }

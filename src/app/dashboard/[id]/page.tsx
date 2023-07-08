@@ -59,9 +59,7 @@ export default async function ScreenPage({ params }: { params: { id: number } })
       <Suspense fallback={<Skeleton />}>
         <div className="flex flex-col gap-12">
           <div className="flex h-[720px] flex-col items-center justify-between gap-4 xl:flex-row">
-            <div
-              className="h-[720px] w-[1080px] max-w-7xl flex-1"
-            >
+            <div className="h-[720px] w-[1080px] max-w-7xl flex-1">
               {screen && <ScreenRenderer htmlString={screen?.html_file} isSvg={screen.is_svg} />}
             </div>
             <div className="flex flex-col gap-2">

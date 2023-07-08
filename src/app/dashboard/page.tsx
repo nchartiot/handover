@@ -26,9 +26,9 @@ function LoadingDashboard() {
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient<Database>({ cookies });
-  const { data: screens } = await supabase.from('latest_screens').select('name, id, version, html_file');
-  
-  
+  const { data: screens } = await supabase
+    .from('latest_screens')
+    .select('name, id, version, html_file');
 
   return (
     <div className="px-14 py-8">
@@ -42,11 +42,16 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {screens?.map((screen) => {
             if (!screen || !screen.name || !screen.id || !screen.html_file) return null;
-            
+
             return (
               <div key={screen.id}>
                 <p>{screen.version}</p>
-                <DashboardCard key={screen.id} name={screen.name} id={screen.id} htmlFile={screen.html_file} />
+                <DashboardCard
+                  key={screen.id}
+                  name={screen.name}
+                  id={screen.id}
+                  htmlFile={screen.html_file}
+                />
               </div>
             );
           })}

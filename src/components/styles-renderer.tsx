@@ -10,7 +10,7 @@ export function StylesRenderer() {
   const { styles, isSvg } = useStyleStore();
 
   return (
-    <ScrollArea className="h-96 rounded-md max-w-lg border">
+    <ScrollArea className="h-96 max-w-lg rounded-md border">
       <div className="p-4">
         <h2>Styles</h2>
         {isSvg ? (
