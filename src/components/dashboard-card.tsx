@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 type DashboardCardProps = {
   name: string;
   id: string;
-  htmlFile?: string;
+  htmlFile: string;
 };
 
 export async function DashboardCard({ name, id, htmlFile }: DashboardCardProps) {
