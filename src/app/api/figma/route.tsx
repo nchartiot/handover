@@ -110,6 +110,10 @@ const convertFrameToHtml = (frame: FrameNode) => {
   return mainDiv;
 };
 
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders, status: 200 });
+}
+
 export async function POST(request: Request) {
   try {
     const {
@@ -150,6 +154,10 @@ export async function POST(request: Request) {
   } catch (e: unknown) {
     console.error(`${e}`);
     return new Response(`Failed to generate the image`, {
+      headers: {
+        ...corsHeaders,
+        'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+      },
       status: 500,
     });
   }
