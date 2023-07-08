@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { Balancer } from 'react-wrap-balancer';
 
 import { HeroImage } from '@/components/hero-image';
 import { LoginDialog } from '@/components/login-dialog';
@@ -29,13 +30,16 @@ export default async function Home() {
         </div>
         <div className="py-24 sm:py-32 lg:pb-40">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto max-w-4xl text-center">
               <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-                Data to enrich your online business
+                <Balancer>Bridge the gap between design and development</Balancer>
               </h1>
               <p className="mt-6 text-lg leading-8">
-                Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat
-                commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.
+                <Balancer>
+                  We&apos;re not just enhancing the handoff process, we&apos;re reinventing it.
+                  Experience continuous communication, efficient workflows, and a shared
+                  understanding that surpasses the traditional handoff method.
+                </Balancer>
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 {user ? (
